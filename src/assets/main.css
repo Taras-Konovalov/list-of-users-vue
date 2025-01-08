@@ -4,4 +4,11 @@ html, body {
   margin: 0;
   font-family: "Open Sans", serif;
   font-weight: 400;
+  background-color: #F2F3FA;
+}
+
+.container {
+  max-width: 500px;
+  width: 100%;
+  margin: 0 auto;
 }
