@@ -26,5 +26,6 @@ export interface IUser {
   phone: string;
   website: string;
   company: Company;
+  // TODO: добавить в API фото пользователя, так как в возвращаемых данных его нет
   avatar?: string
 }

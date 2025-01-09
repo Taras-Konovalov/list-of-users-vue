@@ -6,17 +6,28 @@ import { useRouter } from 'vue-router'
 const usersStore = useUsersStore()
 const router = useRouter()
 
+// Переменная для хранения поискового запроса от пользователя.
 const searchQuery = ref<string>('')
 
+// Вычисляемый список пользователей, соответствующих поисковому запросу.
+// Фильтруем пользователей из `usersStore.users`, проверяя, содержится ли значение
+// поискового запроса в имени пользователя (регистр символов игнорируется).
 const foundUsers = computed(() => {
   return usersStore.users.filter(user => {
-    return user.name.toLowerCase().includes(searchQuery.value.toLowerCase())
+    return user.name?.toLowerCase().includes(searchQuery.value?.toLowerCase())
   })
 })
 
+// Загружаем список пользователей из хранилища при монтировании компонента.
 onMounted(() => {
   usersStore.loadUsers()
 })
+
+// Функция для очистки текущего значения поискового запроса.
+// Устанавливаем значение `searchQuery` в пустую строку.
+function clearSearchQuery() {
+  searchQuery.value = ''
+}
 </script>
 
 <template>
@@ -25,6 +36,7 @@ onMounted(() => {
       v-model="searchQuery"
       label="Search users"
       icon="mdi-account"
+      @clear="clearSearchQuery"
     />
   </section>
   <section class="container user-list">
@@ -33,17 +45,15 @@ onMounted(() => {
       v-if="foundUsers.length"
       class="list"
     >
-      <v-list-item
+      <UserListItem
         v-for="user in foundUsers"
         :key="user.id"
-        :title="`Name: ${user.name}`"
+        :title="`name: ${user.name}`"
         :subtitle="`email: ${user.email}`"
-        :prepend-avatar="user.avatar ? user.avatar : 'https://www.iconpacks.net/icons/2/free-user-icon-3296-thumb.png'"
-        elevation="1"
-        link
+        :avatar="user.avatar ? user.avatar : 'https://www.iconpacks.net/icons/2/free-user-icon-3296-thumb.png'"
+        isLink
         @click="router.push(`/users/${user.id}`)"
-      >
-      </v-list-item>
+      />
     </v-list>
     <v-alert
       v-else
