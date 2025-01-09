@@ -14,7 +14,6 @@ withDefaults(defineProps<{
   isClearable: true
 })
 
-
 // Определяем события, которые компонент может выбрасывать.
 // - `update:modelValue` — выбрасывается при изменении значения в поле ввода, передает новое значение как строку.
 // - `clear` — выбрасывается при нажатии на кнопку очистки поля.
@@ -22,7 +21,6 @@ const emits = defineEmits<{
   (e: 'update:modelValue', text: string):void,
   (e: 'clear'): void
 }>()
-
 
 // Функция для обработки изменений в поле ввода и выброса события `update:modelValue`.
 // Значение приводится к строке, так как `modelValue` ожидает строку.
@@ -43,7 +41,7 @@ function onInput(value: string | number | null): void {
     @click:clear="isClearable ? emits('clear') : null"
   >
   <template v-if="icon" #prepend-inner>
-    <v-icon size="30">mdi-account</v-icon>
+    <v-icon size="30">{{ icon }}</v-icon>
   </template>
   </v-text-field>
 </template>

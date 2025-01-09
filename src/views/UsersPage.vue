@@ -2,12 +2,15 @@
 import { ref, onMounted, computed } from 'vue'
 import { useUsersStore } from '@/stores/users'
 import { useRouter } from 'vue-router'
+import { DEFAULT_USER_AVATAR } from '@/enum/user'
 
 const usersStore = useUsersStore()
 const router = useRouter()
 
 // Переменная для хранения поискового запроса от пользователя.
 const searchQuery = ref<string>('')
+
+const isLoading = ref<boolean>(false)
 
 // Вычисляемый список пользователей, соответствующих поисковому запросу.
 // Фильтруем пользователей из `usersStore.users`, проверяя, содержится ли значение
@@ -19,8 +22,14 @@ const foundUsers = computed(() => {
 })
 
 // Загружаем список пользователей из хранилища при монтировании компонента.
-onMounted(() => {
-  usersStore.loadUsers()
+onMounted(async() => {
+  isLoading.value = true
+  console.log(isLoading.value)
+  // Создание искусственной задержки на 1 секунду для отображения загрузки при получение данных от сервера
+  await new Promise(resolve => setTimeout(resolve, 1000))
+
+  usersStore.loadUsers().finally(() => isLoading.value = false)
+
 })
 
 // Функция для очистки текущего значения поискового запроса.
@@ -42,7 +51,7 @@ function clearSearchQuery() {
   <section class="container user-list">
     <v-list
       lines="three"
-      v-if="foundUsers.length"
+      v-if="foundUsers.length && !isLoading"
       class="list"
     >
       <UserListItem
@@ -50,17 +59,23 @@ function clearSearchQuery() {
         :key="user.id"
         :title="`name: ${user.name}`"
         :subtitle="`email: ${user.email}`"
-        :avatar="user.avatar ? user.avatar : 'https://www.iconpacks.net/icons/2/free-user-icon-3296-thumb.png'"
+        :avatar="user.avatar ? user.avatar : DEFAULT_USER_AVATAR"
         isLink
         @click="router.push(`/users/${user.id}`)"
       />
     </v-list>
     <v-alert
-      v-else
+      v-if="!foundUsers.length && !isLoading"
       text="Users not found"
       type="info"
       variant="tonal"
     ></v-alert>
+    <v-progress-circular
+      v-if="!foundUsers.length && isLoading"
+      :size="40"
+      color="primary"
+      indeterminate
+    ></v-progress-circular>
   </section>
 </template>
 
@@ -72,9 +87,12 @@ function clearSearchQuery() {
 
 .user-list {
   margin-bottom: 20px;
+  display: flex;
+  justify-content: center;
 }
 
 :deep(.v-list) {
+  width: 100%;
   padding: 0;
   max-height: calc(100vh - 120px) !important;
   overflow-y: auto;

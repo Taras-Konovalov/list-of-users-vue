@@ -14,16 +14,24 @@ export const useUsersStore = defineStore('users', {
     }
   },
   getters: {
+    // Получения всех пользователей
     getUsers(state) {
       return state.users
     },
+    // Поиска пользователя по его ID
+    getUserByUserId(): (userId: number) => IUser | null {
+      return (userId: number) => {
+        return this.users.find(user => user.id === userId) || null
+      }
+    },
   },
   actions: {
+    // Получеине пользователей из API
     async loadUsers(): Promise<void> {
       try {
         const response = await axios.get<IUser[]>(API.BASE_URL)
 
-        if (response.status === 200) {
+        if (response && response.status === 200) {
           this.setUsers(response.data)
         }
       } catch (error) {
@@ -34,8 +42,9 @@ export const useUsersStore = defineStore('users', {
         }
       }
     },
+    // Установки новых пользователей в состояние
     setUsers(users: IUser[]) {
       this.users = users
-    }
-  }
+    },
+  },
 })

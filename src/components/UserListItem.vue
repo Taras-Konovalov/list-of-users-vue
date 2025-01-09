@@ -27,8 +27,8 @@ withDefaults(defineProps<{
   </v-list-item>
 </template>
 
-
-
 <style scoped>
-
+:deep(.v-list-item) {
+  width: 100%;
+}
 </style>

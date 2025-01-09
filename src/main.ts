@@ -10,6 +10,7 @@ import router from './router'
 import { aliases, mdi } from 'vuetify/iconsets/mdi'
 import TextInput from '@/components/ui/TextInput.vue'
 import UserListItem from '@/components/UserListItem.vue'
+import UserCard from './components/UserCard.vue'
 
 const vuetify = createVuetify({
   icons: {
@@ -22,9 +23,10 @@ const vuetify = createVuetify({
 })
 
 const app = createApp(App)
+app.use(createPinia())
 app.component('TextInput', TextInput)
 app.component('UserListItem', UserListItem)
-app.use(createPinia())
+app.component('UserCard', UserCard)
 app.use(router)
 app.use(vuetify)
 app.mount('#app')
